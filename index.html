@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.M.E.L.I.A — Triagem Inteligente</title>
+
+    <!-- Fontes: DM Sans (corpo) + Space Grotesk (display) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<header>
+    <div class="header-inner">
+        <div class="brand">
+            <img src="AmeliaCVPS.png" alt="AMÉLIA" class="brand-logo" id="logo-img">
+            <span class="brand-name">A.M.E.L.I.A</span>
+        </div>
+        <nav id="nav-buttons">
+            <button class="btn btn-ghost" onclick="showScreen('login')">Entrar</button>
+            <button class="btn btn-solid" onclick="showScreen('cadastro')">Cadastrar</button>
+        </nav>
+    </div>
+</header>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main>
+
+    <!-- ── WELCOME ── -->
+    <section id="screen-welcome" class="screen active">
+        <div class="hero">
+            <div class="hero-badge">Protocolo de Manchester · IA · LGPD</div>
+            <h1 class="hero-title">Triagem médica <br><em>inteligente</em></h1>
+            <p class="hero-sub">
+                Classificação automática de risco por voz ou texto,<br>
+                com modelo Random Forest de <strong>96,4 % de acurácia.</strong>
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-solid btn-xl" onclick="showScreen('cadastro')">
+                    Começar agora
+                </button>
+                <button class="btn btn-ghost btn-xl" onclick="showScreen('login')">
+                    Já tenho conta
+                </button>
+            </div>
+            <button class="btn btn-text" onclick="showScreen('sobre')">Sobre o projeto →</button>
+
+            <!-- cards decorativos -->
+            <div class="hero-cards">
+                <div class="hero-card card-red">🔴 Emergência<br><small>Imediato</small></div>
+                <div class="hero-card card-orange">🟠 Muito Urgente<br><small>≤ 10 min</small></div>
+                <div class="hero-card card-yellow">🟡 Urgente<br><small>≤ 30 min</small></div>
+                <div class="hero-card card-green">🟢 Pouco Urgente<br><small>≤ 2 h</small></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CADASTRO ── -->
+    <section id="screen-cadastro" class="screen">
+        <div class="form-card">
+            <div class="form-card-icon">📋</div>
+            <h2>Criar conta</h2>
+            <p class="form-lead">Seus dados ficam protegidos por criptografia AES-128.</p>
+
+            <form id="form-cadastro" onsubmit="handleCadastro(event)" novalidate>
+                <div class="field">
+                    <label for="cad-nome">Nome completo</label>
+                    <input id="cad-nome" type="text" required placeholder="Maria da Silva">
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="cad-cpf">CPF</label>
+                        <input id="cad-cpf" type="text" required placeholder="000.000.000-00" maxlength="14">
+                    </div>
+                    <div class="field">
+                        <label for="cad-nascimento">Nascimento</label>
+                        <input id="cad-nascimento" type="date" required>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="cad-sus">Cartão SUS</label>
+                        <input id="cad-sus" type="text" required placeholder="000 0000 0000 0000" maxlength="19">
+                    </div>
+                    <div class="field">
+                        <label for="cad-sexo">Sexo biológico</label>
+                        <select id="cad-sexo" required>
+                            <option value="">Selecione</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="cad-telefone">Telefone <span class="opt">(opcional)</span></label>
+                    <input id="cad-telefone" type="tel" placeholder="(11) 99999-9999" maxlength="15">
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="cad-senha">Senha</label>
+                        <input id="cad-senha" type="password" required placeholder="Mín. 6 caracteres" minlength="6">
+                    </div>
+                    <div class="field">
+                        <label for="cad-senha-confirm">Confirmar senha</label>
+                        <input id="cad-senha-confirm" type="password" required placeholder="Repita a senha" minlength="6">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-solid btn-lg">Criar conta</button>
+                    <button type="button" class="btn btn-ghost" onclick="showScreen('welcome')">Voltar</button>
+                </div>
+            </form>
+
+            <p class="form-footer-link">
+                Já tem conta? <a href="#" onclick="showScreen('login');return false">Entrar</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- ── LOGIN ── -->
+    <section id="screen-login" class="screen">
+        <div class="form-card form-card--narrow">
+            <div class="form-card-icon">🔐</div>
+            <h2>Entrar</h2>
+            <p class="form-lead">Use seu CPF ou Cartão SUS.</p>
+
+            <form id="form-login" onsubmit="handleLogin(event)" novalidate>
+                <div class="field">
+                    <label for="login-id">CPF ou Cartão SUS</label>
+                    <input id="login-id" type="text" required placeholder="Digite seu CPF ou SUS">
+                </div>
+                <div class="field">
+                    <label for="login-senha">Senha</label>
+                    <input id="login-senha" type="password" required placeholder="Sua senha">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-solid btn-lg">Entrar</button>
+                    <button type="button" class="btn btn-ghost" onclick="showScreen('welcome')">Voltar</button>
+                </div>
+            </form>
+
+            <p class="form-footer-link">
+                Sem conta? <a href="#" onclick="showScreen('cadastro');return false">Cadastre-se</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- ── PAINEL / CHAT ── -->
+    <section id="screen-painel" class="screen">
+        <div class="chat-wrap">
+
+            <!-- cabeçalho do chat -->
+            <div class="chat-head">
+                <div class="chat-avatar-wrap">
+                    <span class="chat-avatar">🤖</span>
+                    <span class="pulse-ring"></span>
+                </div>
+                <div class="chat-head-info">
+                    <strong>A.M.E.L.I.A</strong>
+                    <span id="api-status">Assistente de Triagem</span>
+                </div>
+                <span id="api-indicator" class="api-dot" title="Status da API">⚪</span>
+            </div>
+
+            <!-- mensagens -->
+            <div class="chat-msgs" id="chat-messages"></div>
+
+            <!-- input area: texto + voz + enviar -->
+            <div class="chat-bar" id="chat-input-area">
+                <input id="chat-input" type="text"
+                       placeholder="Digite sua resposta ou clique no microfone…" disabled>
+                <button id="btn-voice" class="btn-mic" onclick="toggleRecording()"
+                        title="Clique para falar">🎙️</button>
+                <button id="chat-send" class="btn btn-solid" onclick="sendMessage()" disabled>
+                    Enviar
+                </button>
+            </div>
+
+            <!-- feedback de voz -->
+            <div id="voice-feedback" class="voice-fb"></div>
+
+            <!-- botões pós-triagem -->
+            <div class="chat-done" id="chat-actions" style="display:none">
+                <button class="btn btn-solid btn-lg" onclick="generatePDF()">
+                    📄 Baixar Prontuário PDF
+                </button>
+                <button class="btn btn-ghost" onclick="resetChat()">🔄 Nova Triagem</button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── SOBRE ── -->
+    <section id="screen-sobre" class="screen">
+        <div class="about-wrap">
+            <div class="about-logo-block">
+                <img src="AmeliaCVPS.png" alt="Logo CVPS" class="about-logo">
+            </div>
+
+            <h2>Sobre a A.M.E.L.I.A</h2>
+            <p class="about-tag">Tecnologia a favor da vida</p>
+
+            <p class="about-body">
+                A AMÉLIA utiliza <strong>Inteligência Artificial</strong> para triagem médica
+                automatizada baseada no <strong>Protocolo de Manchester</strong>. O modelo
+                Random Forest, treinado com mais de 1.000 casos clínicos, atinge
+                <strong>96,4% de acurácia</strong> na classificação de risco —
+                garantindo agilidade, precisão e conformidade com a LGPD.
+            </p>
+
+            <div class="about-stats">
+                <div class="stat"><span>96.4%</span><small>Acurácia do modelo</small></div>
+                <div class="stat"><span>200</span><small>Árvores de decisão</small></div>
+                <div class="stat"><span>4</span><small>Níveis de urgência</small></div>
+                <div class="stat"><span>AES-128</span><small>Criptografia</small></div>
+            </div>
+
+            <div class="about-team">
+                <h4>👥 Equipe</h4>
+                <div class="team-grid">
+                    <div class="team-card">Marcelo de Oliveira</div>
+                    <div class="team-card">Marcos Pires</div>
+                    <div class="team-card">Thiago Nascimento</div>
+                    <div class="team-card">Daniel Oliveira</div>
+                </div>
+            </div>
+
+            <div class="about-meta">
+                <p>👨‍🏫 <strong>Professor:</strong> Anderson Borges</p>
+                <p>🏫 <strong>Instituição:</strong> Colégio Visconde de Porto Seguro</p>
+                <p>📅 <strong>Ano:</strong> 2025 — FeNaDANTE</p>
+                <p>📚 <strong>Curso:</strong> Robótica e IA — 2ª série EM</p>
+            </div>
+
+            <button class="btn btn-solid btn-lg" onclick="showScreen('welcome')">
+                ← Voltar ao início
+            </button>
+        </div>
+    </section>
+
+</main>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Scripts: voice.js ANTES de script.js -->
+<script src="voice.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
